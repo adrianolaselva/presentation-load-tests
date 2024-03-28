@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+JMETER_CLIENT_DIR="$PWD/jmeter"
+if [ ! -d "$JMETER_CLIENT_DIR" ]; then
+    echo "=============================================================================================================================="
+	  echo "> installing jmeter in the ${JMETER_CLIENT_DIR} directory"
+
+    wget https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+    tar -xzf apache-jmeter-5.6.3.tgz
+    mv apache-jmeter-5.6.3 jmeter
+    rm -rf apache-jmeter-5.6.3.tgz
+
+    echo "=============================================================================================================================="
+fi
+
+JMETER_LIB_PATH="${JMETER_CLIENT_DIR}/lib/kafka"
+if [ ! -d "$JMETER_LIB_PATH" ]; then
+    echo "=============================================================================================================================="
+    echo "> adding kafka library in jmeter"
+
+    KAFKA_METER_LIB_NAME="di-kafkameter-1.2.zip"
+    curl -o "$KAFKA_METER_LIB_NAME" "https://jmeter-plugins.org/files/packages/${KAFKA_METER_LIB_NAME}"
+    unzip -o "$KAFKA_METER_LIB_NAME" -d "$JMETER_LIB_PATH"
+    rm "$KAFKA_METER_LIB_NAME"
+
+    rsync -av "${JMETER_CLIENT_DIR}/lib/kafka/lib/" "${JMETER_CLIENT_DIR}/lib/"
+    rm -rf "${JMETER_CLIENT_DIR}/lib/kafka"
+
+    echo "=============================================================================================================================="
+fi
+
+
+
